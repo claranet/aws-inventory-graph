@@ -1,5 +1,7 @@
 # Description
 
+![release](https://flat.badgen.net/github/release/claranet/aws-inventory-graph/latest?color=green) ![last commit](https://flat.badgen.net/github/last-commit/claranet/aws-inventory-graph) ![licence](https://flat.badgen.net/github/license/claranet/aws-inventory-graph) ![stars](https://flat.badgen.net/github/stars/claranet/aws-inventory-graph)
+
 Explore your AWS platform with, [`Dgraph`](https://dgraph.io/), a graph database.
 
 ![screenshot](./img/screenshot.png)
@@ -12,18 +14,22 @@ Thanks to Go and its goroutines, we can insert thousand of ressources in few sec
 - [docker-compose](https://docs.docker.com/compose/install/)
 - [Go](https://golang.org/) (for build only)
 
+## Install
+
+Download and move to `/usr/local/bin/` a binary from [release page](https://github.com/claranet/aws-inventory-graph/releases)
+
 ## Build
 
 This project uses *go.mod*, so after cloning this repo, simply run :
 
 ```bash
-go build && chmod +x ./inventory-graph
+go build && chmod +x ./aws-inventory-graph
 ```
 
 or
 
 ```bash
-GOBIN=/usr/local/bin/ go install && chmod +x /usr/local/bin/inventory-graph
+GOBIN=/usr/local/bin/ go install && chmod +x /usr/local/bin/aws-inventory-graph
 ```
 
 ## Usage
@@ -47,7 +53,7 @@ Access to WebUI (**dgraph-ratel**) : [http://localhost:8000](http://localhost:80
 Authentication is based on your `.aws/config` file.
 
 ```bash
-Usage of inventory-graph:
+Usage of aws-inventory-graph:
   -dgraph string
         Dgraph server (ip:port) (default "127.0.0.1:9080")
   -list
@@ -67,7 +73,7 @@ Usage of inventory-graph:
 Example :
 
 ```bash
-inventory-graph -region us-west-2 -profile xxxx
+aws-inventory-graph -region us-west-2 -profile xxxx
 
 2019/11/29 17:35:58 Drop all previous data
 2019/11/29 17:35:58 Add schema
@@ -90,7 +96,7 @@ You can get all schemas for *types* and *predicates* in **dgraph-ratel** WebUI:
 or with binary, in JSON format :
 
 ```bash
-inventory-graph -type Address | jq
+aws-inventory-graph -type Address | jq
 
 {
   "types": [
@@ -190,6 +196,8 @@ Here the list of currently supported ressources :
 :warning: AWS API is often messy, names are not consistent from one endpoint to another, we try to fix that and keep a global coherance. This is why some Predicates don't match exact names returned by API.
 
 ## Query examples
+
+See [here](https://docs.dgraph.io/query-language/) to get more info about **Dgraph’s GraphQL+**.
 
 ### Get Elastic IPs + Instances + NatGateways
 
