@@ -1,0 +1,11 @@
+src
+pkg
+src/*
+pkg/*
+./src
+./src/*
+./pkg
+./pkg/*
+dist
+dist/*
+aws-inventory-graph

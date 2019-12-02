@@ -266,7 +266,6 @@ Here the list of currently supported ressources :
     }
   }
 }
-
 ```
 
 ### Get the Cidr which are allowed for access to DbInstances
