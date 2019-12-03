@@ -85,8 +85,6 @@ aws-inventory-graph -region us-west-2 -profile xxxx
 ...
 ```
 
-:warning: For now, data are cleaned up at each execution, and only one account and one region can be imported at time .
-
 ### Get schema for a type
 
 You can get all schemas for *types* and *predicates* in **dgraph-ratel** WebUI:
