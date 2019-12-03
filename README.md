@@ -56,12 +56,12 @@ Authentication is based on your `.aws/config` file.
 Usage of aws-inventory-graph:
   -dgraph string
         Dgraph server (ip:port) (default "127.0.0.1:9080")
+  -drop
+        Drop all nodes and the schema
   -list
         List available ressource types
-  -no-drop
-        Disable the drop of all nodes and the schema before import
   -no-schema
-        Disable the refresh of the schema at each run
+        Disable the refresh schema at each run
   -profile string
         Profile from ~/.aws/config (default "default")
   -region string
