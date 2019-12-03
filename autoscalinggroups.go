@@ -84,6 +84,7 @@ func (list autoScalingGroupList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]autoScalingGroupNodes)
 	n := make(map[string]string)

@@ -71,6 +71,7 @@ func (list launchConfigurationList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]launchConfigurationNodes)
 	n := make(map[string]string)

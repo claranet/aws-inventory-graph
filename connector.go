@@ -24,6 +24,11 @@ type connector struct {
 	awsAccountID   string
 	ressources     map[string]map[string]string
 	waitGroup      sync.WaitGroup
+	stats          statistics
+}
+
+type statistics struct {
+	NumberOfNodes int
 }
 
 func newConnector(profile, region, dgraph *string) *connector {

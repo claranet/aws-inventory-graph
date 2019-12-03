@@ -74,8 +74,8 @@ func (list snapshotList) addNodes(c *connector) {
 		b.Progress = *i.Progress
 		a = append(a, b)
 	}
-
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]snapshotNodes)
 	n := make(map[string]string)

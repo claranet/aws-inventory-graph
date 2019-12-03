@@ -93,6 +93,7 @@ func (list imageList) addNodes(c *connector) {
 	}
 
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]imageNodes)
 	n := make(map[string]string)

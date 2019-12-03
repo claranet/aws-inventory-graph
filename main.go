@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -12,32 +14,33 @@ func main() {
 	dgraph := flag.String("dgraph", "127.0.0.1:9080", "Dgraph server (ip:port)")
 	dtype := flag.String("type", "", "Get the schema for a type (only after importing some data)")
 	list := flag.Bool("list", false, "List available ressource types")
-	nodrop := flag.Bool("no-drop", false, "Disable the drop of all nodes and the schema before import")
+	drop := flag.Bool("drop", false, "Drop all nodes and the schema")
 	noschema := flag.Bool("no-schema", false, "Disable the refresh schema at each run")
 	flag.Parse()
-
-	if *dtype != "" {
-		dgraphDisplaySchema(dgraph, dtype)
-		os.Exit(0)
-	}
-
-	connector := newConnector(profile, region, dgraph)
-	defer connector.grpcConnexion.Close()
 
 	if *list == true {
 		fmt.Println("Address, AutoScalingGroup, AvailabilityZone, CacheCluster, CacheSubnetGroup, Cidr, DbCluster, DbClusterParameterGroup, DbInstance, DbParameterGroup, DbSubnetGroup, Instance, InstanceProfile, KeyPair, LaunchConfiguration, LaunchTemplate, LoadBalancer, NatGateway, OptionGroup, SecurityGroup, Subnet, TargetGroup, Volume, Vpc, VpcPeeringConnection")
 		os.Exit(0)
 	}
 
-	if *nodrop != true {
+	connector := newConnector(profile, region, dgraph)
+	defer connector.grpcConnexion.Close()
+
+	if *drop == true {
 		connector.dgraphDropAll()
-	} else {
-		connector.dgraphDropPrevious()
+		os.Exit(0)
+	}
+
+	if *dtype != "" {
+		dgraphDisplaySchema(dgraph, dtype)
+		os.Exit(0)
 	}
 
 	if *noschema != true {
 		connector.dgraphAddSchema()
 	}
+
+	connector.dgraphDropPrevious()
 
 	var instances instanceList
 	var keypairs keyPairList
@@ -69,6 +72,7 @@ func main() {
 
 	// List ressources
 	connector.waitGroup.Add(25)
+	start := time.Now()
 	go func() { instances = connector.listInstances() }()
 	go func() { keypairs = connector.listKeyPairs() }()
 	go func() { volumes = connector.listVolumes() }()
@@ -153,4 +157,6 @@ func main() {
 	// snapshots.addEdges(connector)
 
 	connector.waitGroup.Wait()
+
+	log.Printf("%v Nodes have been imported in %s\n", connector.stats.NumberOfNodes, time.Since(start))
 }

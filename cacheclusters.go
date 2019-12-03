@@ -113,4 +113,5 @@ func (list cacheClusterList) addEdges(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 }

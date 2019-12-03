@@ -64,6 +64,7 @@ func (list vpcPeeringConnectionList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]vpcPeeringConnectionNodes)
 	n := make(map[string]string)

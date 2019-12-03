@@ -59,6 +59,7 @@ func (list cacheSubnetGroupList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]cacheSubnetGroupNodes)
 	n := make(map[string]string)

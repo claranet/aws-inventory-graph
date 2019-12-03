@@ -12,7 +12,7 @@ import (
 )
 
 func (c *connector) dgraphDropAll() {
-	log.Println("Drop all previous data")
+	log.Println("Drop all data")
 	op := api.Operation{DropAll: true}
 	if err := c.dgraphClient.Alter(*c.context, &op); err != nil {
 		log.Fatal(err)
@@ -25,9 +25,9 @@ func (c *connector) dgraphDropPrevious() {
 	defer txn.Discard(*c.context)
 
 	q := `query query($owner: string, $region: string){
-		list(func: eq(OwnerId, $owner)) @filter(eq(Region, $region)) {
-			uid
-		}
+			list(func: eq(OwnerId, $owner)) @filter(eq(Region, $region)) {
+				uid
+			}
 		}`
 
 	res, err := txn.QueryWithVars(*c.context, q, map[string]string{"$owner": c.awsAccountID, "$region": c.awsRegion})

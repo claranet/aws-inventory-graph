@@ -61,6 +61,7 @@ func (list dbClusterParameterGroupList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]dbClusterParameterGroupNodes)
 	n := make(map[string]string)

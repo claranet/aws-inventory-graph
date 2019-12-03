@@ -93,6 +93,7 @@ func (list loadBalancerList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]loadBalancerNodes)
 	n := make(map[string]string)
@@ -131,6 +132,7 @@ func (list loadBalancerV2List) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]loadBalancerNodes)
 	n := make(map[string]string)

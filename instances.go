@@ -53,7 +53,7 @@ func (list instanceList) addNodes(c *connector) {
 		return
 	}
 	log.Println("Add Instance Nodes")
-	instances := make(instanceNodes, 0, len(list.Reservations))
+	a := make(instanceNodes, 0, len(list.Reservations))
 
 	for _, r := range list.Reservations {
 		for _, i := range r.Instances {
@@ -81,10 +81,11 @@ func (list instanceList) addNodes(c *connector) {
 			if i.PublicIpAddress != nil {
 				b.PublicIPAddress = *i.PublicIpAddress
 			}
-			instances = append(instances, b)
+			a = append(a, b)
 		}
 	}
-	c.dgraphAddNodes(instances)
+	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]instanceNodes)
 	n := make(map[string]string)

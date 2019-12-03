@@ -65,6 +65,7 @@ func (list optionGroupList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]optionGroupNodes)
 	n := make(map[string]string)

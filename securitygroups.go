@@ -108,6 +108,7 @@ func (list securityGroupList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	if len(y) != 0 {
 		for i := range y {
@@ -118,6 +119,7 @@ func (list securityGroupList) addNodes(c *connector) {
 			})
 		}
 		c.dgraphAddNodes(z)
+		c.stats.NumberOfNodes += len(z)
 	}
 
 	m := make(map[string]securityGroupNodes)

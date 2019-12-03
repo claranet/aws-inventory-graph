@@ -60,6 +60,7 @@ func (list instanceProfileList) addNodes(c *connector) {
 		a = append(a, b)
 	}
 	c.dgraphAddNodes(a)
+	c.stats.NumberOfNodes += len(a)
 
 	m := make(map[string]instanceProfileNodes)
 	n := make(map[string]string)
