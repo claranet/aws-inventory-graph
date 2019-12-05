@@ -67,11 +67,11 @@ func main() {
 	var cachesubnetgroups cacheSubnetGroupList
 	var vpcpeeringconnections vpcPeeringConnectionList
 	var natgateways natGatewayList
-	// var images imageList
-	// var snapshots snapshotList
+	var snapshots snapshotList
+	var images imageList
 
 	// List ressources
-	connector.waitGroup.Add(25)
+	connector.waitGroup.Add(27)
 	start := time.Now()
 	go func() { instances = connector.listInstances() }()
 	go func() { keypairs = connector.listKeyPairs() }()
@@ -98,13 +98,13 @@ func main() {
 	go func() { cachesubnetgroups = connector.listCacheSubnetGroups() }()
 	go func() { vpcpeeringconnections = connector.listVpcPeeringConnections() }()
 	go func() { natgateways = connector.listNatGateways() }()
-	// images = connector.listImages()
-	// snapshots = connector.listSnapshots()
+	go func() { snapshots = connector.listSnapshots() }()
+	go func() { images = connector.listImages() }()
 
 	connector.waitGroup.Wait()
 
 	// Add Nodes
-	connector.waitGroup.Add(25)
+	connector.waitGroup.Add(27)
 	instances.addNodes(connector)
 	keypairs.addNodes(connector)
 	volumes.addNodes(connector)
@@ -130,13 +130,13 @@ func main() {
 	cachesubnetgroups.addNodes(connector)
 	vpcpeeringconnections.addNodes(connector)
 	natgateways.addNodes(connector)
-	// images.addNodes(connector)
-	// snapshots.addNodes(connector)
+	snapshots.addNodes(connector)
+	images.addNodes(connector)
 
 	connector.waitGroup.Wait()
 
 	// Add Edges
-	connector.waitGroup.Add(17)
+	connector.waitGroup.Add(19)
 	instances.addEdges(connector)
 	addresses.addEdges(connector)
 	volumes.addEdges(connector)
@@ -154,7 +154,8 @@ func main() {
 	cachesubnetgroups.addEdges(connector)
 	vpcpeeringconnections.addEdges(connector)
 	natgateways.addEdges(connector)
-	// snapshots.addEdges(connector)
+	snapshots.addEdges(connector)
+	images.addEdges(connector)
 
 	connector.waitGroup.Wait()
 

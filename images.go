@@ -12,25 +12,26 @@ type imageList struct{ *ec2.DescribeImagesOutput }
 type imageNodes []imageNode
 
 type imageNode struct {
-	UID                string   `json:"uid,omitempty"`
-	Type               []string `json:"dgraph.type,omitempty"`
-	Name               string   `json:"name,omitempty"` // This field is only for Ratel Viz
-	OwnerID            string   `json:"OwnerId,omitempty"`
-	OwnerName          string   `json:"OwnerName,omitempty"`
-	Region             string   `json:"Region,omitempty"`
-	Service            string   `json:"Service,omitempty"`
-	ImageID            string   `json:"ImageId,omitempty"`
-	VirtualizationType string   `json:"VirtualizationType,omitempty"`
-	Hypervisor         string   `json:"Hypervisor,omitempty"`
-	EnaSupport         bool     `json:"EnaSupport,omitempty"`
-	SriovNetSupport    string   `json:"SriovNetSupport,omitempty"`
-	State              string   `json:"State,omitempty"`
-	Architecture       string   `json:"Architecture,omitempty"`
-	ImageLocation      string   `json:"ImageLocation,omitempty"`
-	RootDeviceType     string   `json:"RootDeviceType,omitempty"`
-	RootDeviceName     string   `json:"RootDeviceName,omitempty"`
-	Public             bool     `json:"Public,omitempty"`
-	ImageType          string   `json:"ImageType,omitempty"`
+	UID                string        `json:"uid,omitempty"`
+	Type               []string      `json:"dgraph.type,omitempty"`
+	Name               string        `json:"name,omitempty"` // This field is only for Ratel Viz
+	OwnerID            string        `json:"OwnerId,omitempty"`
+	OwnerName          string        `json:"OwnerName,omitempty"`
+	Region             string        `json:"Region,omitempty"`
+	Service            string        `json:"Service,omitempty"`
+	ImageID            string        `json:"ImageId,omitempty"`
+	VirtualizationType string        `json:"VirtualizationType,omitempty"`
+	Hypervisor         string        `json:"Hypervisor,omitempty"`
+	EnaSupport         bool          `json:"EnaSupport,omitempty"`
+	SriovNetSupport    string        `json:"SriovNetSupport,omitempty"`
+	State              string        `json:"State,omitempty"`
+	Architecture       string        `json:"Architecture,omitempty"`
+	ImageLocation      string        `json:"ImageLocation,omitempty"`
+	RootDeviceType     string        `json:"RootDeviceType,omitempty"`
+	RootDeviceName     string        `json:"RootDeviceName,omitempty"`
+	Public             bool          `json:"Public,omitempty"`
+	ImageType          string        `json:"ImageType,omitempty"`
+	Snapshot           snapshotNodes `json:"_Snapshot,omitempty"`
 }
 
 func (c *connector) listImages() imageList {
@@ -90,10 +91,16 @@ func (list imageList) addNodes(c *connector) {
 		b.Public = *i.Public
 		b.ImageType = *i.ImageType
 		a = append(a, b)
+		if len(a) == 100 {
+			c.dgraphAddNodes(a)
+			c.stats.NumberOfNodes += len(a)
+			a = imageNodes{}
+		}
 	}
-
-	c.dgraphAddNodes(a)
-	c.stats.NumberOfNodes += len(a)
+	if len(a) != 0 {
+		c.dgraphAddNodes(a)
+		c.stats.NumberOfNodes += len(a)
+	}
 
 	m := make(map[string]imageNodes)
 	n := make(map[string]string)
@@ -102,4 +109,28 @@ func (list imageList) addNodes(c *connector) {
 		n[i.ImageID] = i.UID
 	}
 	c.ressources["Images"] = n
+}
+
+func (list imageList) addEdges(c *connector) {
+	defer c.waitGroup.Done()
+
+	if len(list.Images) == 0 {
+		return
+	}
+	log.Println("Add Image Edges")
+	a := imageNodes{}
+	for _, i := range list.Images {
+		b := imageNode{
+			UID: c.ressources["Images"][*i.ImageId],
+		}
+		for _, j := range i.BlockDeviceMappings {
+			if j.Ebs != nil {
+				if j.Ebs.SnapshotId != nil {
+					b.Snapshot = append(b.Snapshot, snapshotNode{UID: c.ressources["Snapshots"][*j.Ebs.SnapshotId], DeviceName: *j.DeviceName})
+				}
+			}
+		}
+		a = append(a, b)
+	}
+	c.dgraphAddNodes(a)
 }

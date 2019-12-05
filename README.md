@@ -174,6 +174,7 @@ Here the list of currently supported ressources :
 - DbInstance
 - DbParameterGroup
 - DbSubnetGroup
+- Image
 - Instance
 - InstanceProfile
 - KeyPair
@@ -183,6 +184,7 @@ Here the list of currently supported ressources :
 - NatGateway
 - OptionGroup
 - SecurityGroup
+- Snapshot
 - Subnet
 - TargetGroup
 - Volume

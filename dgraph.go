@@ -20,35 +20,38 @@ func (c *connector) dgraphDropAll() {
 }
 
 func (c *connector) dgraphDropPrevious() {
-	log.Println("List previous data")
-	txn := c.dgraphClient.NewTxn()
-	defer txn.Discard(*c.context)
+	log.Println("Drop previous data")
 
-	q := `query query($owner: string, $region: string){
-			list(func: eq(OwnerId, $owner)) @filter(eq(Region, $region)) {
+	for {
+		txn := c.dgraphClient.NewTxn()
+		q := `query query($owner: string, $region: string){
+			list(func: eq(OwnerId, $owner), first: 250) @filter(eq(Region, $region)) {
 				uid
 			}
 		}`
 
-	res, err := txn.QueryWithVars(*c.context, q, map[string]string{"$owner": c.awsAccountID, "$region": c.awsRegion})
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	m := make(map[string]cidrNodes)
-	json.Unmarshal(res.Json, &m)
-
-	if len(m["list"]) != 0 {
-		log.Println("Drop previous data")
-		n, _ := json.Marshal(m["list"])
-		mu := &api.Mutation{
-			CommitNow:  true,
-			DeleteJson: n,
+		res, err := txn.QueryWithVars(*c.context, q, map[string]string{"$owner": c.awsAccountID, "$region": c.awsRegion})
+		if err != nil {
+			log.Println(err.Error())
 		}
 
-		_, err = txn.Mutate(*c.context, mu)
-		if err != nil {
-			log.Fatal(err)
+		m := make(map[string]cidrNodes) // Cidr are simplest ressources, we use them for an easy Marshal
+		json.Unmarshal(res.Json, &m)
+
+		if len(m["list"]) != 0 {
+			n, _ := json.Marshal(m["list"])
+			mu := &api.Mutation{
+				// CommitNow:  true,
+				DeleteJson: n,
+			}
+
+			_, err = txn.Mutate(*c.context, mu)
+			if err != nil {
+				log.Fatal(err)
+			}
+			txn.Commit(*c.context)
+		} else {
+			break
 		}
 	}
 }

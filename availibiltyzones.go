@@ -41,10 +41,18 @@ func (list availabilityZoneList) addNodes(c *connector) {
 		return
 	}
 	log.Println("Add AvailibilityZones Nodes")
+	m := make(map[string]availabilityZoneNodes)
+	json.Unmarshal(c.dgraphQuery("AvailabilityZone"), &m)
+
 	a := make(availabilityZoneNodes, 0, len(list.AvailabilityZones))
 
 	for _, i := range list.AvailabilityZones {
 		var b availabilityZoneNode
+		for _, j := range m["list"] {
+			if *i.ZoneName == j.ZoneName {
+				b.UID = j.UID
+			}
+		}
 		b.Service = "ec2"
 		b.Type = []string{"AvailabilityZone"}
 		b.Region = c.awsRegion
@@ -56,9 +64,8 @@ func (list availabilityZoneList) addNodes(c *connector) {
 	c.dgraphAddNodes(a)
 	c.stats.NumberOfNodes += len(a)
 
-	m := make(map[string]availabilityZoneNodes)
-	n := make(map[string]string)
 	json.Unmarshal(c.dgraphQuery("AvailabilityZone"), &m)
+	n := make(map[string]string)
 	for _, i := range m["list"] {
 		n[i.ZoneName] = i.UID
 	}

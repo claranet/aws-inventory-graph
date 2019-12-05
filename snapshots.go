@@ -25,6 +25,7 @@ type snapshotNode struct {
 	Encrypted   bool       `json:"Encrypted,omitempty"`
 	Progress    string     `json:"Progress,omitempty"`
 	Volume      volumeNode `json:"_Volume,omitempty"`
+	DeviceName  string     `json:"_Snapshot|DeviceName,omitempty"`
 }
 
 func (c *connector) listSnapshots() snapshotList {
@@ -73,9 +74,16 @@ func (list snapshotList) addNodes(c *connector) {
 		b.Encrypted = *i.Encrypted
 		b.Progress = *i.Progress
 		a = append(a, b)
+		if len(a) == 100 {
+			c.dgraphAddNodes(a)
+			c.stats.NumberOfNodes += len(a)
+			a = snapshotNodes{}
+		}
 	}
-	c.dgraphAddNodes(a)
-	c.stats.NumberOfNodes += len(a)
+	if len(a) != 0 {
+		c.dgraphAddNodes(a)
+		c.stats.NumberOfNodes += len(a)
+	}
 
 	m := make(map[string]snapshotNodes)
 	n := make(map[string]string)

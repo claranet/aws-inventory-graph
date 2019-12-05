@@ -23,6 +23,7 @@ func getdgraphSchema() string {
 	_Image: uid @reverse .
 	_Subnet: [uid] @reverse .
 	_SecurityGroup: [uid] @reverse .
+	_Snapshot: [uid] @reverse .
 	
 	InstanceId: string @index(term) .
 	InstanceType: string @index(term) .
@@ -80,6 +81,7 @@ func getdgraphSchema() string {
 		Device: string
 		_AvailabilityZone: AvailabilityZone
 		_Instance: Instance
+		_Snapshot: Snapshot
 	}
 
 	PublicIp: string @index(term) .
@@ -296,6 +298,7 @@ func getdgraphSchema() string {
 	Encrypted: bool .
 	Progress: string @index(term) .
 	_Volume: uid @reverse .
+	DeviceName: string @index(term) .
 
 	type Snapshot {
 		name: string
@@ -309,6 +312,7 @@ func getdgraphSchema() string {
 		VolumeSize: int
 		Encrypted: bool
 		Progress: string
+		DeviceName: string
 		_Volume: Volume
 	}
 
@@ -343,6 +347,7 @@ func getdgraphSchema() string {
 		RootDeviceName: string
 		Public: bool
 		ImageType: string
+		_Snapshot: Snapshot
 	}
 
 	SubnetId: string @index(term) .

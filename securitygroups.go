@@ -110,13 +110,21 @@ func (list securityGroupList) addNodes(c *connector) {
 	c.dgraphAddNodes(a)
 	c.stats.NumberOfNodes += len(a)
 
+	o := make(map[string]cidrNodes)
+	json.Unmarshal(c.dgraphQuery("Cidr"), &o)
 	if len(y) != 0 {
 		for i := range y {
-			z = append(z, cidrNode{
+			b := cidrNode{
 				Service: "ec2",
 				Type:    []string{"Cidr"},
 				Name:    i,
-			})
+			}
+			for _, j := range o["list"] {
+				if i == j.Name {
+					b.UID = j.UID
+				}
+			}
+			z = append(z, b)
 		}
 		c.dgraphAddNodes(z)
 		c.stats.NumberOfNodes += len(z)
@@ -136,7 +144,6 @@ func (list securityGroupList) addNodes(c *connector) {
 	}
 	c.ressources["SecurityGroupEdges"] = l
 
-	o := make(map[string]cidrNodes)
 	p := make(map[string]string)
 	json.Unmarshal(c.dgraphQuery("Cidr"), &o)
 	for _, i := range o["list"] {
