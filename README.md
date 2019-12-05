@@ -366,9 +366,9 @@ See [here](https://docs.dgraph.io/query-language/) to get more info about **Dgra
 
 ```bash
 {
-  Volume(func: type(Volume))@filter(not has(~_Volume) and eq(State, "in-use")) {
+  Instance(func: type(Instance)) @filter(eq(OwnerName, univadis-prod)) @cascade{
     name dgraph.type
-    Instance:_Instance{name InstanceId}
+    Volume:~_Instance @filter(not has(~_Volume) and type(Volume)){}
   }
 }
 ```
