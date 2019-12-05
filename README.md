@@ -373,6 +373,17 @@ See [here](https://docs.dgraph.io/query-language/) to get more info about **Dgra
 }
 ```
 
+### Get the sum of Volumes by type
+
+```bash
+{
+  Volume(func: type(Volume))@filter(not has(~_Volume) and eq(State, "in-use")) {
+    name dgraph.type
+    Instance:_Instance{name InstanceId}
+  }
+}
+```
+
 ## Author
 
 Thomas Labarussias ([@Issif](https://github.com/Issif))
