@@ -377,9 +377,15 @@ See [here](https://docs.dgraph.io/query-language/) to get more info about **Dgra
 
 ```bash
 {
-  Volume(func: type(Volume))@filter(not has(~_Volume) and eq(State, "in-use")) {
-    name dgraph.type
-    Instance:_Instance{name InstanceId}
+  var(func: type(Volume))  @filter(eq(VolumeType, gp2)){
+    A as Size
+  }
+  var(func: type(Volume))  @filter(eq(VolumeType, standard)){
+    B as Size
+  }
+  Volume(){
+    gp2:sum(val(A))
+    standard:sum(val(B))
   }
 }
 ```
