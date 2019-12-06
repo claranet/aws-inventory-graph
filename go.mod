@@ -1,4 +1,4 @@
-module git.fr.clara.net/claranet/cloudnative/projects/cloud/aws/tools/inventory-graph
+module github.com/claranet/aws-inventory-graph
 
 go 1.13
 
