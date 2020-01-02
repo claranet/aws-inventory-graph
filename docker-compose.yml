@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   dgraph:
-    image: dgraph/standalone:latest
+    image: dgraph/standalone:v1.1.1
     ports:
       - 9080:9080
       - 5080:5080

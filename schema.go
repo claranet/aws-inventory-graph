@@ -78,7 +78,6 @@ func getdgraphSchema() string {
 		Size: int
 		Iops: int
 		State: string
-		Device: string
 		_AvailabilityZone: AvailabilityZone
 		_Instance: Instance
 		_Snapshot: Snapshot
@@ -372,7 +371,7 @@ func getdgraphSchema() string {
 		State: string
 		CidrBlock: string
 		_Vpc: Vpc
-		_AvailibilityZone: AvailibilityZone
+		_AvailabilityZone: AvailabilityZone
 	}
 
 	GroupId: string @index(term) .
@@ -426,10 +425,12 @@ func getdgraphSchema() string {
 	StorageType: string @index(term) .
 	StorageEncrypted: bool .
 	BackupRetentionPeriod: int .
-	IsClusterWriter: bool .
+	IsClusterWriter: bool .			
 	_DbSubnetGroup: [uid] @reverse . 
 	_DbParameterGroup: uid @reverse . 
 	_OptionGroup: uid @reverse .
+	_SecondaryAvailabilityZone: uid @reverse .
+	_DbClusterParameterGroup: uid @reverse .
 
 	type DbInstance {
 		name: string
@@ -469,7 +470,8 @@ func getdgraphSchema() string {
 		_Vpc: Vpc
 		_DbSubnetGroup: DbSubnetGroup 
 		_DbParameterGroup: DbParameterGroup
-		_OptionGroup: OptionGroup 
+		_OptionGroup: OptionGroup
+		_DbClusterParameterGroup: DbClusterParameterGroup
 	}
 
 	DbClusterArn: string @index(term) .
@@ -516,7 +518,7 @@ func getdgraphSchema() string {
 		_SecurityGroup: SecurityGroup
 		_DbClusterMember: DbInstance
 		_ReadReplica: DbInstance
-		_DbClusterParameterGroup:  DbClusterParameterGroup
+		_DbClusterParameterGroup: DbClusterParameterGroup
 		_DbSubnetGroup: DbSubnetGroup 
 	}
 
@@ -557,6 +559,7 @@ func getdgraphSchema() string {
 
 	DbClusterParameterGroupArn: string @index(term) .
 	DbClusterParameterGroupName: string @index(term) .
+	DbClusterscription: string @index(term) .
 
 	type DbClusterParameterGroup {
 		name: string
@@ -605,7 +608,6 @@ func getdgraphSchema() string {
 		TransitEncryptionEnabled: bool
 		CacheNodeType: string
 		Engine: string
-		EngineVersion: string
 		Endpoint: string
 		Port: string
 		EngineVersion: string
